@@ -27,7 +27,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 w-full flex items-center justify-between px-4 py-2 font-inter 
+      className={`fixed top-0 w-full z-50 flex items-center justify-between px-4 py-2 font-inter 
                   bg-lightmode dark:bg-darkmode transition-all duration-300`}
     >
       {/* Logo */}

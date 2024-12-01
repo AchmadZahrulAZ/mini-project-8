@@ -5,7 +5,7 @@ import Profile from '../components/Profile';
 const About = () => {
   return (
     <>
-        <Header />
+        <Header title="ACHMAD ZAHRUL ALI ZADAN" />
         <Profile />
     </>
   )

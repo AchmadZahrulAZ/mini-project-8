@@ -7,7 +7,7 @@ import Pagination from '../components/Pagination';
 const Blog = () => {
   return (
     <>
-        <Header />
+        <Header title="THE BLOG" />
         <RecentBlogPosts />
         <AllBlogPosts />
         <Pagination />
