@@ -1,71 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPosts } from "../redux/async/postSlice";
 import { Link } from "react-router-dom";
 import WrapIcon from "../assets/icons/Wrap.png";
 
 const AllBlogPosts = () => {
-  const blogPosts = [
-    {
-      id: 1,
-      title: "Bill Walsh leadership lessons",
-      description:
-        "Like to know the secrets of transforming a 2-14 team into a 3x Super Bowl winning Dynasty?",
-      categories: ["Leadership", "Management"],
-      image: "https://via.placeholder.com/384x240",
-      author: "Alec Whitten",
-      date: "Sunday, 1 Jan 2023",
-    },
-    {
-      id: 2,
-      title: "PM mental models",
-      description:
-        "Mental models are simple expressions of complex processes or relationships.",
-      categories: ["Product", "Research", "Frameworks"],
-      image: "https://via.placeholder.com/384x240",
-      author: "Demi Wilkinson",
-      date: "Sunday, 1 Jan 2023",
-    },
-    {
-      id: 3,
-      title: "What is Wireframing?",
-      description:
-        "Introduction to Wireframing and its Principles. Learn from the best in the industry.",
-      categories: ["Design", "Research"],
-      image: "https://via.placeholder.com/384x240",
-      author: "Candice Wu",
-      date: "Sunday, 1 Jan 2023",
-    },
-    {
-      id: 4,
-      title: "How collaboration makes us better designers",
-      description:
-        "Collaboration can make our teams stronger, and our individual designs better.",
-      categories: ["Design", "Research"],
-      image: "https://via.placeholder.com/384x240",
-      author: "Natali Craig",
-      date: "Sunday, 1 Jan 2023",
-    },
-    {
-      id: 5,
-      title: "Our top 10 Javascript frameworks to use",
-      description:
-        "JavaScript frameworks make development easy with extensive features and functionalities.",
-      categories: ["Software Development", "Tools", "SaaS"],
-      image: "https://via.placeholder.com/384x240",
-      author: "Drew Cano",
-      date: "Sunday, 1 Jan 2023",
-    },
-    {
-      id: 6,
-      title: "Podcast: Creating a better CX Community",
-      description:
-        "Starting a community doesn’t need to be complicated, but how do you get started?",
-      categories: ["Podcasts", "Customer Success"],
-      image: "https://via.placeholder.com/384x240",
-      author: "Orlando Diggs",
-      date: "Sunday, 1 Jan 2023",
-    },
-  ];
+  const dispatch = useDispatch();
+  const { data: blogPosts, loading, error } = useSelector((state) => state.posts.allPosts);
 
+  // Panggil aksi untuk mengambil data ketika komponen pertama kali dirender
+  useEffect(() => {
+    dispatch(fetchPosts({ page: 1 })); // Ganti "1" sesuai kebutuhan untuk pagination
+  }, [dispatch]);
+
+  // State untuk mendeteksi lebar layar
   const [isDesktop, setIsDesktop] = useState(true);
   const [isTablet, setIsTablet] = useState(false);
   const [isSmartphone, setIsSmartphone] = useState(false);
@@ -84,48 +32,51 @@ const AllBlogPosts = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  if (loading) {
+    return <div className="text-center text-darkmode dark:text-lightmode">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500">Error: {error}</div>;
+  }
+
+  if (!blogPosts || blogPosts.length === 0) {
+    return <div className="text-center text-darkmode dark:text-lightmode">No blog posts available</div>;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold text-darkmode dark:text-lightmode mb-8">
-        All blog posts
-      </h2>
+      <h2 className="text-2xl font-bold text-darkmode dark:text-lightmode mb-8">All blog posts</h2>
 
+      {/* Desktop Mode */}
       {isDesktop && (
         <div className="grid grid-cols-3 gap-6">
           {blogPosts.map((post) => (
-            <Link to={`/blog/${post.id}`} key={post.id}>
+            <Link to={`/blog/${post.key}`} key={post.key}>
               <div className="border rounded-lg shadow-lg overflow-hidden bg-lightmode dark:bg-darkmode">
                 <img
-                  src={post.image}
+                  src={post.thumb}
                   alt={post.title}
                   className="w-full h-[240px] object-cover"
                 />
                 <div className="p-4">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    {post.date}
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{post.time}</p>
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-darkmode dark:text-lightmode">
-                      {post.title}
-                    </h3>
+                    <h3 className="text-lg font-bold text-darkmode dark:text-lightmode">{post.title}</h3>
                     <img
                       src={WrapIcon}
                       alt="Wrap Icon"
                       className="w-4 h-4 ml-2"
                     />
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                    {post.description}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{post.desc}</p>
                   <div className="flex flex-wrap space-x-2">
-                    {post.categories.map((category) => (
-                      <span
-                        key={category}
-                        className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 text-darkmode dark:text-lightmode rounded"
-                      >
-                        {category}
-                      </span>
-                    ))}
+                    <span
+                      key={post.tag}
+                      className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 text-darkmode dark:text-lightmode rounded"
+                    >
+                      {post.tag}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -134,42 +85,35 @@ const AllBlogPosts = () => {
         </div>
       )}
 
+      {/* Tablet Mode */}
       {isTablet && (
         <div className="grid grid-cols-2 gap-4">
           {blogPosts.map((post) => (
-            <Link to={`/blog/${post.id}`} key={post.id}>
+            <Link to={`/blog/${post.key}`} key={post.key}>
               <div className="border rounded-lg shadow-lg overflow-hidden bg-lightmode dark:bg-darkmode">
                 <img
-                  src={post.image}
+                  src={post.thumb}
                   alt={post.title}
                   className="w-full h-[240px] object-cover"
                 />
                 <div className="p-4">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    {post.date}
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{post.time}</p>
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-darkmode dark:text-lightmode">
-                      {post.title}
-                    </h3>
+                    <h3 className="text-lg font-bold text-darkmode dark:text-lightmode">{post.title}</h3>
                     <img
                       src={WrapIcon}
                       alt="Wrap Icon"
                       className="w-4 h-4 ml-2"
                     />
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                    {post.description}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{post.desc}</p>
                   <div className="flex flex-wrap space-x-2">
-                    {post.categories.map((category) => (
-                      <span
-                        key={category}
-                        className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 text-darkmode dark:text-lightmode rounded"
-                      >
-                        {category}
-                      </span>
-                    ))}
+                    <span
+                      key={post.tag}
+                      className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 text-darkmode dark:text-lightmode rounded"
+                    >
+                      {post.tag}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -178,42 +122,35 @@ const AllBlogPosts = () => {
         </div>
       )}
 
+      {/* Smartphone Mode */}
       {isSmartphone && (
         <div className="flex flex-col space-y-4">
           {blogPosts.map((post) => (
-            <Link to={`/blog/${post.id}`} key={post.id}>
+            <Link to={`/blog/${post.key}`} key={post.key}>
               <div className="border rounded-lg shadow-lg overflow-hidden bg-lightmode dark:bg-darkmode">
                 <img
-                  src={post.image}
+                  src={post.thumb}
                   alt={post.title}
                   className="w-full h-[240px] object-cover"
                 />
                 <div className="p-4">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    {post.date}
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{post.time}</p>
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-darkmode dark:text-lightmode">
-                      {post.title}
-                    </h3>
+                    <h3 className="text-lg font-bold text-darkmode dark:text-lightmode">{post.title}</h3>
                     <img
                       src={WrapIcon}
                       alt="Wrap Icon"
                       className="w-4 h-4 ml-2"
                     />
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                    {post.description}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{post.desc}</p>
                   <div className="flex flex-wrap space-x-2">
-                    {post.categories.map((category) => (
-                      <span
-                        key={category}
-                        className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 text-darkmode dark:text-lightmode rounded"
-                      >
-                        {category}
-                      </span>
-                    ))}
+                    <span
+                      key={post.tag}
+                      className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 text-darkmode dark:text-lightmode rounded"
+                    >
+                      {post.tag}
+                    </span>
                   </div>
                 </div>
               </div>
