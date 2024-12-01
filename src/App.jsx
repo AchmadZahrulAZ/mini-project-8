@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Blog from './pages/Blog';
 import About from './pages/About';
 import Newsletter from './pages/Newsletter';
+import BlogDetail from './pages/BlogDetail'; // Import BlogDetail
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route path="/" element={<Blog />} />
           <Route path="/about" element={<About />} />
           <Route path="/newsletter" element={<Newsletter />} />
+          <Route path="/blog/:id" element={<BlogDetail />} /> {/* Tambahkan route detail */}
         </Routes>
         <Footer />
       </Router>

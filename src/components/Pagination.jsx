@@ -10,14 +10,14 @@ const Pagination = () => {
         {/* Previous */}
         <div className="flex items-center space-x-2 cursor-pointer">
           <img src={ArrowLeftIcon} alt="Arrow Left" className="w-4 h-4" />
-          <span className="text-gray-600 hover:text-black font-medium">
+          <span className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium">
             Previous
           </span>
         </div>
 
         {/* Next */}
         <div className="flex items-center space-x-2 cursor-pointer">
-          <span className="text-gray-600 hover:text-black font-medium">
+          <span className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium">
             Next
           </span>
           <img src={ArrowRightIcon} alt="Arrow Right" className="w-4 h-4" />
